@@ -3,66 +3,88 @@
 App em Flutter/Dart para fazer a chamada de turmas: cadastrar turmas e alunos,
 marcar a presença de cada dia e ver o histórico de presença de cada aluno.
 
-| Turmas | Alunos | Chamada do dia | Histórico |
+| Turmas | Turma | Chamada | Histórico |
 |---|---|---|---|
-| ![](prints/1-turmas.png) | ![](prints/2-alunos.png) | ![](prints/5-chamada-do-dia.png) | ![](prints/6-historico.png) |
+| ![](prints/1-turmas.png) | ![](prints/2-turma.png) | ![](prints/3-chamada.png) | ![](prints/4-historico.png) |
 
 ## O que o app faz
 
-- **Turmas**: criar, editar o nome e remover (com confirmação).
-- **Alunos** (dentro da turma): adicionar; cada aluno mostra "Presença: 50%", um botão
-  **Histórico** e o menu **⋮** com *Editar nome* e *Remover*.
-- **Chamada por dia**: "Fazer chamada" abre o calendário. Escolhido o dia, marca quem está
-  presente e vê "X de Y presentes (Z%)" com barra de progresso. Se já existe chamada
-  naquele dia, ela é aberta para editar. Chamadas antigas podem ser abertas ou removidas.
-- **Histórico do aluno**: no botão *Histórico* (ou tocando no aluno) aparece cada dia com "Presente" ou "Faltou"
-  e o percentual geral.
+- **Turmas**: criar (botão +), editar o nome (lápis) e remover (lixeira).
+- **Alunos**: dentro da turma, adicionar pelo campo de texto, editar o nome e remover.
+  Cada aluno mostra o percentual de presença.
+- **Chamada**: "Nova chamada" pede a data (já vem preenchida com hoje) e abre a lista
+  para marcar quem está presente. Chamadas antigas aparecem na tela da turma e podem
+  ser abertas de novo ou removidas.
+- **Histórico**: o botão "Histórico" do aluno mostra cada chamada com "Presente" ou
+  "Faltou" e o percentual.
 
-Os dados ficam só na memória: ao fechar o app, voltam os dados de exemplo.
+Os dados ficam só na memória: ao fechar o app, volta a turma de exemplo.
 
 ## Estrutura
 
 ```
 lib/
-  main.dart                  -> inicia o app e cria os dados de exemplo
-  modelos.dart               -> classes Aluno, Chamada e Turma
-  telas/
-    tela_turmas.dart         -> lista de turmas (criar/editar/remover)
-    tela_turma.dart          -> abas Alunos e Chamadas de uma turma
-    tela_chamada.dart        -> chamada de um dia (marcar presença)
-    tela_historico.dart      -> histórico de presença de um aluno
-    dialogos.dart            -> caixas de "digite o nome" e "tem certeza?"
+  modelos.dart          -> classes Aluno, Chamada e Turma
+  main.dart             -> inicia o app; tela com a lista de turmas
+  tela_turma.dart       -> alunos e chamadas de uma turma
+  tela_chamada.dart     -> marcar presença em uma chamada
+  tela_historico.dart   -> histórico de presença de um aluno
+  dialogo.dart          -> caixa para digitar um texto (nome ou data)
 test/
-  widget_test.dart           -> testes (rodar com: flutter test)
-prints/                      -> prints do app rodando
-Dockerfile                   -> compila a versão web e serve com nginx
+  widget_test.dart      -> testes (rodar com: flutter test)
+prints/                 -> prints do app rodando
+Dockerfile              -> compila a versão web e serve com nginx
 ```
 
-## Como funciona a presença por dia
+## Como funciona
 
-Cada `Chamada` guarda uma data e a lista de alunos presentes naquele dia:
+São três classes:
 
 ```dart
+class Aluno {
+  String nome;
+}
+
 class Chamada {
-  DateTime data;
-  List<Aluno> presentes = [];
-  bool estaPresente(Aluno aluno) => presentes.contains(aluno);
+  String data;
+  List<Aluno> presentes = [];   // quem veio nesse dia
+}
+
+class Turma {
+  String nome;
+  List<Aluno> alunos = [];
+  List<Chamada> chamadas = [];
 }
 ```
 
-O percentual do aluno conta em quantas chamadas ele aparece como presente:
+Para saber a presença de um aluno, a turma conta em quantas chamadas ele está na lista
+de presentes e divide pelo total de chamadas:
 
 ```dart
-int presencasDe(Aluno aluno) =>
-    chamadas.where((c) => c.estaPresente(aluno)).length;
+int presencasDoAluno(Aluno aluno) {
+  int total = 0;
+  for (Chamada chamada in chamadas) {
+    if (chamada.estaPresente(aluno)) {
+      total++;
+    }
+  }
+  return total;
+}
 
-double percentualDe(Aluno aluno) =>
-    chamadas.isEmpty ? 0 : presencasDe(aluno) / chamadas.length * 100;
+double percentualDoAluno(Aluno aluno) {
+  if (chamadas.isEmpty) {
+    return 0;
+  }
+  return presencasDoAluno(aluno) / chamadas.length * 100;
+}
 ```
+
+Toda vez que algo muda (aluno novo, presença marcada...), a mudança é feita dentro de
+`setState`, que redesenha a tela.
 
 ## Como rodar no seu computador
 
-### Opção 1: com Flutter (recomendado para desenvolver)
+### Opção 1: com Flutter (para desenvolver)
 
 1. Instale o Flutter seguindo o guia oficial: https://docs.flutter.dev/get-started/install
    (no Windows, o jeito mais fácil é instalar o VS Code + extensão Flutter, que baixa o SDK).
@@ -108,6 +130,3 @@ Sem compose:
 docker build -t chamaai .
 docker run --rm -p 8080:80 chamaai
 ```
-
-O Docker gera a versão **web** do app. Para mexer no código e ver as mudanças na hora,
-use a opção 1.
