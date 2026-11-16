@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'cores.dart';
 import 'modelos.dart';
 
 // Tela da chamada de um dia: marcar quem está presente.
@@ -53,6 +54,7 @@ class _TelaChamadaState extends State<TelaChamada> {
               },
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: corFalta),
               child: const Text('Sair sem salvar'),
               onPressed: () {
                 Navigator.pop(contextoDialogo); // fecha o aviso
@@ -83,29 +85,84 @@ class _TelaChamadaState extends State<TelaChamada> {
         body: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            Text(
-              '${rascunho.presentes.length} de ${turma.alunos.length} presentes '
-              '(${percentual.toStringAsFixed(0)}%)',
-              style: const TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 8),
-            LinearProgressIndicator(value: percentual / 100),
-            const SizedBox(height: 8),
-            for (Aluno aluno in turma.alunos)
-              CheckboxListTile(
-                title: Text(aluno.nome),
-                value: rascunho.estaPresente(aluno),
-                onChanged: (valor) {
-                  setState(() {
-                    rascunho.marcarOuDesmarcar(aluno);
-                  });
-                },
+            // Resumo: quantos vieram, em destaque
+            Container(
+              padding: const EdgeInsets.all(20),
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [corPrincipal, Color(0xFF6366F1)],
+                ),
+                borderRadius: BorderRadius.circular(24),
               ),
-            const SizedBox(height: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${rascunho.presentes.length} de ${turma.alunos.length} presentes '
+                    '(${percentual.toStringAsFixed(0)}%)',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: LinearProgressIndicator(
+                      value: percentual / 100,
+                      minHeight: 10,
+                      color: corDestaque,
+                      backgroundColor: Colors.white24,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Lista de alunos: verde quando está presente
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  children: [
+                    for (Aluno aluno in turma.alunos)
+                      CheckboxListTile(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        tileColor: rascunho.estaPresente(aluno)
+                            ? corPresente.withValues(alpha: 0.10)
+                            : null,
+                        activeColor: corPresente,
+                        title: Text(aluno.nome),
+                        subtitle: Text(
+                          rascunho.estaPresente(aluno) ? 'Presente' : 'Ausente',
+                          style: TextStyle(
+                            color: rascunho.estaPresente(aluno)
+                                ? corPresente
+                                : Colors.grey,
+                          ),
+                        ),
+                        value: rascunho.estaPresente(aluno),
+                        onChanged: (valor) {
+                          setState(() {
+                            rascunho.marcarOuDesmarcar(aluno);
+                          });
+                        },
+                      ),
+                  ],
+                ),
+              ),
+            ),
+
             // Salva a chamada e volta para a tela da turma.
-            ElevatedButton(
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(backgroundColor: corPresente),
+              icon: const Icon(Icons.check_circle),
+              label: const Text('Finalizar'),
               onPressed: finalizar,
-              child: const Text('Finalizar'),
             ),
           ],
         ),

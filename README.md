@@ -21,6 +21,19 @@ marcar a presença de cada dia e ver o histórico de presença de cada aluno.
 - **Histórico**: o botão "Histórico" do aluno mostra cada chamada com "Presente" ou
   "Faltou" e o percentual.
 
+## Cores
+
+As cores ficam todas em `lib/cores.dart`:
+
+| Cor | Onde aparece | Por quê |
+|---|---|---|
+| Índigo `#3730A3` | barra do topo, títulos, botões principais | cor principal: passa seriedade e confiança, combina com escola e tem bom contraste com texto branco |
+| Coral `#FF7A59` | "Nova turma", "Nova chamada", barra da chamada | destaque: chama atenção para as ações de criar, sem ser confundido com erro |
+| Verde `#16A34A` | presente, "Finalizar", presença a partir de 75% | significa "ok / concluído" |
+| Amarelo `#F59E0B` | presença entre 50% e 74% | atenção: o aluno está faltando bastante |
+| Vermelho `#DC2626` | falta, remover, "Sair sem salvar", presença abaixo de 50% | perigo ou falta |
+| Cinza claro `#F3F4FA` | fundo das telas | deixa os cartões brancos de cada seção bem separados |
+
 Os dados ficam só na memória: ao fechar o app, volta a turma de exemplo.
 
 ## Estrutura
@@ -33,6 +46,7 @@ lib/
   tela_chamada.dart     -> marcar presença em uma chamada
   tela_historico.dart   -> histórico de presença de um aluno
   dialogo.dart          -> caixa para digitar um texto (nome ou data)
+  cores.dart            -> cores do app, tema e título das seções
 prints/                 -> prints do app rodando
 Dockerfile              -> compila a versão web e serve com nginx
 ```
