@@ -61,6 +61,17 @@ class Turma {
     return chamada.presentes.length / alunos.length * 100;
   }
 
+  // Procura a chamada de uma data. Se não tiver, devolve null.
+  // Cada turma só pode ter uma chamada por dia.
+  Chamada? chamadaDoDia(String data) {
+    for (Chamada chamada in chamadas) {
+      if (chamada.data == data) {
+        return chamada;
+      }
+    }
+    return null;
+  }
+
   // Quando um aluno sai da turma, sai também das chamadas.
   void removerAluno(Aluno aluno) {
     alunos.remove(aluno);

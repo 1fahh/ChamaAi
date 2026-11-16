@@ -13,8 +13,11 @@ marcar a presença de cada dia e ver o histórico de presença de cada aluno.
 - **Alunos**: dentro da turma, adicionar pelo campo de texto, editar o nome e remover.
   Cada aluno mostra o percentual de presença.
 - **Chamada**: "Nova chamada" pede a data (já vem preenchida com hoje) e abre a lista
-  para marcar quem está presente. Chamadas antigas aparecem na tela da turma e podem
-  ser abertas de novo ou removidas.
+  para marcar quem está presente. O botão "Finalizar" salva a chamada e volta para a
+  turma. Se apertar a seta de voltar, o app pergunta se quer sair sem salvar.
+  Cada turma só tem uma chamada por dia: se a data já tiver chamada, o app avisa e
+  abre a que já existe. Chamadas antigas aparecem na tela da turma e podem ser
+  abertas de novo ou removidas.
 - **Histórico**: o botão "Histórico" do aluno mostra cada chamada com "Presente" ou
   "Faltou" e o percentual.
 
@@ -30,8 +33,6 @@ lib/
   tela_chamada.dart     -> marcar presença em uma chamada
   tela_historico.dart   -> histórico de presença de um aluno
   dialogo.dart          -> caixa para digitar um texto (nome ou data)
-test/
-  widget_test.dart      -> testes (rodar com: flutter test)
 prints/                 -> prints do app rodando
 Dockerfile              -> compila a versão web e serve com nginx
 ```
@@ -106,10 +107,6 @@ Toda vez que algo muda (aluno novo, presença marcada...), a mudança é feita d
    ```
    Com o app rodando, aperte `r` no terminal para recarregar depois de mudar o código
    (hot reload) e `q` para sair.
-4. Testes:
-   ```bash
-   flutter test
-   ```
 
 ### Opção 2: com Docker (só para ver o app, sem instalar Flutter)
 
