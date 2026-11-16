@@ -33,8 +33,6 @@ lib/
   tela_chamada.dart     -> marcar presença em uma chamada
   tela_historico.dart   -> histórico de presença de um aluno
   dialogo.dart          -> caixa para digitar um texto (nome ou data)
-test/
-  widget_test.dart      -> testes (rodar com: flutter test)
 prints/                 -> prints do app rodando
 Dockerfile              -> compila a versão web e serve com nginx
 ```
@@ -109,10 +107,6 @@ Toda vez que algo muda (aluno novo, presença marcada...), a mudança é feita d
    ```
    Com o app rodando, aperte `r` no terminal para recarregar depois de mudar o código
    (hot reload) e `q` para sair.
-4. Testes:
-   ```bash
-   flutter test
-   ```
 
 ### Opção 2: com Docker (só para ver o app, sem instalar Flutter)
 
