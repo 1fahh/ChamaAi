@@ -105,11 +105,21 @@ class _TelaTurmaState extends State<TelaTurma> {
           ElevatedButton(
             child: const Text('Nova chamada'),
             onPressed: () {
-              abrirDialogo(context, 'Data da chamada', dataDeHoje, (data) {
+              abrirDialogo(context, 'Data da chamada', dataDeHoje, (texto) {
+                String data = texto.trim();
+                Chamada? existente = turma.chamadaDoDia(data);
+
+                // Já tem chamada nesse dia: avisa e abre a que já existe.
+                if (existente != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Já existe uma chamada em $data')),
+                  );
+                  abrirTela(TelaChamada(turma: turma, chamada: existente));
+                  return;
+                }
+
+                // A chamada nova só entra na lista quando clicar em Finalizar.
                 Chamada nova = Chamada(data);
-                setState(() {
-                  turma.chamadas.add(nova);
-                });
                 abrirTela(TelaChamada(turma: turma, chamada: nova));
               });
             },
